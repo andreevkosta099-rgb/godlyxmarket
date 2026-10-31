@@ -1,0 +1,1274 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#09080d">
+  <title>GODLYX — MM2 Marketplace</title>
+  <style>
+    :root {
+      --bg: #09080d;
+      --panel: #15111d;
+      --panel-2: #1d1728;
+      --purple: #a66aff;
+      --purple-light: #d2b4ff;
+      --line: #30243f;
+      --muted: #aaa0b8;
+      --white: #f7f2ff;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--white);
+      background: radial-gradient(ellipse at 50% -15%, #32194d 0, transparent 48%), var(--bg);
+      font-family: Arial, Helvetica, sans-serif;
+    }
+    header { border-bottom: 1px solid var(--line); background: rgba(9,8,13,.92); }
+    .nav, main { width: min(1100px, 100%); margin: 0 auto; padding-left: 24px; padding-right: 24px; }
+    .nav { min-height: 72px; display: flex; align-items: center; }
+    .brand { font-size: 23px; font-weight: 900; letter-spacing: 5px; }
+    .brand span, h1 span { color: var(--purple); }
+    .hero { text-align: center; padding: 65px 10px 38px; }
+    .eyebrow { color: #c69aff; font-size: 11px; font-weight: bold; letter-spacing: 4px; }
+    h1 { margin: 15px 0; font-size: clamp(40px, 7vw, 68px); letter-spacing: 2px; }
+    .hero p { margin: 0; color: var(--muted); line-height: 1.6; }
+
+    .controls { margin: 26px 0 22px; padding: 18px; border: 1px solid var(--line); border-radius: 17px; background: rgba(21,17,29,.88); box-shadow: 0 12px 35px rgba(0,0,0,.16); }
+    .top-controls { display: grid; grid-template-columns: minmax(180px, 1fr) 210px; gap: 12px; }
+    input, select, button { font: inherit; }
+    .search, .sort, .price-number {
+      width: 100%; min-width: 0; color: #fff; background: #100d16;
+      border: 1px solid var(--line); border-radius: 10px; padding: 13px 14px; outline: none;
+    }
+    .search:focus, .sort:focus, .price-number:focus { border-color: var(--purple); box-shadow: 0 0 0 3px rgba(166,106,255,.12); }
+    .category-row { display: flex; flex-wrap: wrap; gap: 9px; margin: 17px 0; }
+    .category-button {
+      color: #d9cce9; background: #100d16; border: 1px solid var(--line); border-radius: 999px;
+      padding: 9px 15px; cursor: pointer; transition: .2s ease;
+    }
+    .category-button:hover { border-color: #8b5ac2; color: #fff; }
+    .category-button.active { color: #fff; border-color: var(--purple); background: #38234f; box-shadow: 0 0 18px rgba(166,106,255,.15); }
+    .price-panel { display: grid; grid-template-columns: 1fr auto; gap: 14px; align-items: center; border-top: 1px solid var(--line); padding-top: 15px; }
+    .price-heading { color: var(--purple-light); font-size: 12px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; }
+    .price-values { color: var(--muted); font-size: 13px; white-space: nowrap; }
+    .range-wrap { grid-column: 1 / -1; display: grid; grid-template-columns: 1fr 1fr; gap: 18px; padding: 0 2px; }
+    .range-control { display: flex; flex-direction: column; gap: 7px; color: var(--muted); font-size: 11px; letter-spacing: 1px; }
+    input[type="range"] { width: 100%; accent-color: var(--purple); cursor: pointer; }
+    .price-inputs { display: flex; gap: 10px; width: 260px; max-width: 100%; }
+    .price-number { padding: 9px 10px; font-size: 13px; }
+    .filter-footer { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-top: 14px; }
+    .reset {
+      color: #e7d8fb; background: #241832; border: 1px solid var(--line); border-radius: 10px;
+      padding: 10px 14px; cursor: pointer; transition: .2s ease;
+    }
+    .reset:hover { border-color: var(--purple); background: #30203f; }
+    .results { color: var(--muted); font-size: 12px; letter-spacing: 1.2px; margin: 20px 2px 14px; }
+
+    .grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; padding-bottom: 36px; }
+    .card {
+      min-width: 0; overflow: hidden; border: 1px solid var(--line); border-radius: 16px;
+      background: linear-gradient(155deg, #1d1828, #100d15);
+      transition: transform .3s ease, border-color .3s ease, box-shadow .3s ease;
+    }
+    .card:hover { transform: translateY(-8px); border-color: #b17aff; box-shadow: 0 16px 38px rgba(155,92,255,.22); }
+    .thumb {
+      height: 145px; display: grid; place-items: center;
+      background: radial-gradient(circle, #38204f, #15101d 68%);
+      border-bottom: 1px solid rgba(166,106,255,.12);
+    }
+    .item-mark { color: #c49aff; font-size: 48px; font-weight: 900; letter-spacing: -4px; text-shadow: 0 0 22px rgba(155,92,255,.55); transition: transform .3s ease; }
+    .card:hover .item-mark { transform: scale(1.15) rotate(-6deg); }
+    .cardbody { padding: 16px; }
+    .card h3 { margin: 0 0 12px; font-size: 17px; overflow-wrap: anywhere; }
+    .tag { display: inline-block; padding: 6px 10px; border-radius: 30px; color: #d9c1ff; background: #2a1b3b; font-size: 11px; }
+    .price { margin: 13px 0 5px; color: #c49aff; font-size: 13px; font-weight: 800; }
+    .muted { color: var(--muted); font-size: 11px; letter-spacing: 1px; }
+    .empty { grid-column: 1 / -1; text-align: center; padding: 45px 20px; color: var(--muted); border: 1px dashed var(--line); border-radius: 14px; }
+    @keyframes riseInBig {
+      0% {
+        opacity: 0;
+        transform: translate3d(0, 135px, 0) scale(.91);
+        filter: blur(9px);
+      }
+      72% {
+        opacity: 1;
+        transform: translate3d(0, -9px, 0) scale(1.012);
+        filter: blur(0);
+      }
+      100% {
+        opacity: 1;
+        transform: translate3d(0, 0, 0) scale(1);
+        filter: blur(0);
+      }
+    }
+    body.page-enter header .nav {
+      animation: riseInBig 1.15s cubic-bezier(.16,.78,.24,1) .04s both;
+    }
+    body.page-enter .hero {
+      animation: riseInBig 1.3s cubic-bezier(.16,.78,.24,1) .16s both;
+    }
+    body.page-enter .controls {
+      animation: riseInBig 1.35s cubic-bezier(.16,.78,.24,1) .31s both;
+    }
+    body.page-enter .results {
+      animation: riseInBig 1.15s cubic-bezier(.16,.78,.24,1) .48s both;
+    }
+    body.page-enter .card {
+      animation: riseInBig 1.25s cubic-bezier(.16,.78,.24,1)
+        calc(.58s + var(--stagger, 0) * .065s) both;
+    }
+
+    body { position: relative; isolation: isolate; }
+    header, main { position: relative; z-index: 1; }
+    .monster-layer {
+      position: fixed;
+      inset: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 0;
+      overflow: hidden;
+      pointer-events: none;
+      user-select: none;
+    }
+    .bg-monster {
+      position: absolute;
+      left: var(--x);
+      top: 100vh;
+      width: var(--size, 54px);
+      height: var(--size, 54px);
+      opacity: var(--opacity, .22);
+      color: #a96aff;
+      filter: drop-shadow(0 0 10px rgba(166,106,255,.7));
+      will-change: transform;
+      animation: monsterRise var(--duration, 38s) linear var(--delay, -8s) infinite;
+    }
+    .bg-monster svg { display: block; width: 100%; height: 100%; overflow: visible; }
+    .bg-monster .body { fill: url(#monsterPurple); stroke: #bd8aff; stroke-width: 1.8; }
+    .bg-monster .eye {
+      fill: #fff;
+      filter:
+        drop-shadow(0 0 3px #fff)
+        drop-shadow(0 0 8px #e7c2ff)
+        drop-shadow(0 0 15px #b45cff)
+        drop-shadow(0 0 25px #8b2dff);
+      animation: neonEyePulse 2.2s ease-in-out infinite alternate;
+    }
+    .bg-monster .mouth { fill: none; stroke: #f0ddff; stroke-width: 2.4; stroke-linecap: round; }
+    @keyframes monsterRise {
+      from { transform: translate3d(0, 0, 0) rotate(var(--rotate, 0deg)); }
+      to { transform: translate3d(0, -135vh, 0) rotate(calc(var(--rotate, 0deg) + 14deg)); }
+    }
+    @keyframes neonEyePulse {
+      from {
+        opacity: .78;
+        filter: drop-shadow(0 0 2px #fff) drop-shadow(0 0 6px #dfaaff) drop-shadow(0 0 13px #a34dff);
+      }
+      to {
+        opacity: 1;
+        filter: drop-shadow(0 0 5px #fff) drop-shadow(0 0 12px #f1d8ff) drop-shadow(0 0 25px #a34dff) drop-shadow(0 0 34px #7623ff);
+      }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .bg-monster, .bg-monster .eye { animation: none !important; }
+    }
+
+
+    .nav-spacer { flex: 1; }
+    .account-btn { border:1px solid #7044a0; border-radius:10px; padding:10px 18px; color:#fff; background:linear-gradient(135deg,#47236c,#241632); cursor:pointer; font-weight:700; transition:.2s ease; }
+    .account-btn:hover { box-shadow:0 0 22px rgba(166,106,255,.28); transform:translateY(-1px); }
+    .advanced-filters { border-top:1px solid var(--line); padding-top:15px; margin-top:4px; }
+    .filter-title { color:var(--purple-light); font-size:11px; font-weight:800; letter-spacing:1.6px; margin:0 0 9px; }
+    .chip-group { display:flex; flex-wrap:wrap; gap:8px; }
+    .filter-chip { border:1px solid transparent; border-radius:999px; padding:8px 13px; color:#d9cce9; background:#20182c; cursor:pointer; font-size:12px; font-weight:700; transition:.2s ease; }
+    .filter-chip:hover { border-color:#8254ad; color:white; transform:translateY(-1px); }
+    .filter-chip.active { color:white; background:#40245b; border-color:#b17aff; box-shadow:0 0 13px rgba(166,106,255,.18); }
+    .property-title { margin-top:15px; }
+    .chroma-chip span { background:linear-gradient(90deg,#ff596f,#ffbd38,#49df9a,#41baff,#bd75ff); background-clip:text; color:transparent; }
+    .chroma-chip.active { border-color:#c77cff; box-shadow:0 0 16px rgba(183,102,255,.24); }
+    .chroma-tag { margin-left:5px; border:1px solid #8b59b8; color:#edcaff; }
+    .card[role="button"] { cursor:pointer; }
+    .card:focus-visible { outline:2px solid #c49aff; outline-offset:3px; }
+    .modal-backdrop { position:fixed; inset:0; z-index:20; display:none; align-items:center; justify-content:center; padding:20px; background:rgba(3,3,8,.78); backdrop-filter:blur(9px); }
+    .modal-backdrop.open { display:flex; animation:modalFade .22s ease both; }
+    @keyframes modalFade { from {opacity:0;} to {opacity:1;} }
+    body.modal-open { overflow:hidden; }
+    .detail-dialog, .auth-dialog { position:relative; width:min(720px,100%); max-height:min(86vh,820px); overflow:auto; border:1px solid #49345e; border-radius:25px; background:linear-gradient(145deg,#171d30,#111727 70%,#17152a); box-shadow:0 28px 100px rgba(0,0,0,.55),0 0 55px rgba(132,78,203,.13); animation:dialogRise .38s cubic-bezier(.2,.8,.2,1) both; }
+    @keyframes dialogRise { from {opacity:0;transform:translateY(30px) scale(.975);} to {opacity:1;transform:translateY(0) scale(1);} }
+    .modal-close { position:absolute; top:16px; right:16px; z-index:2; width:34px; height:34px; border:0; border-radius:50%; background:#28344b; color:#dce6f7; font-size:24px; line-height:1; cursor:pointer; }
+    .modal-close:hover { background:#3a4965; }
+    .detail-heading { display:flex; gap:20px; padding:28px 58px 22px 28px; align-items:center; }
+    .detail-art { flex:0 0 112px; height:112px; display:grid; place-items:center; border-radius:22px; border:1px solid #33415e; background:radial-gradient(circle,#493066,#20213a 72%); box-shadow:0 0 38px rgba(162,93,255,.18); }
+    .detail-mark { font-size:48px; color:#d5b4ff; font-weight:900; text-shadow:0 0 24px #b46aff; }
+    .detail-title-wrap { min-width:0; }
+    .detail-kicker { color:#ff5caa; font-size:12px; letter-spacing:1px; font-weight:800; }
+    .detail-title-wrap h2 { margin:8px 0 10px; font-size:clamp(22px,4vw,30px); overflow-wrap:anywhere; }
+    .detail-price-row { display:flex; gap:28px; }
+    .detail-price-row div { display:flex; flex-direction:column; gap:4px; }
+    .detail-price-row strong { font-size:20px; }
+    .detail-price-row small { color:#92a1bd; font-size:11px; }
+    .market-price-grid { gap:12px; flex-wrap:wrap; }
+    .market-price-card { min-width:130px; padding:10px 12px; border:1px solid #3a3557; border-radius:12px; background:rgba(11,16,30,.5); }
+    .market-price-card strong { display:block; color:#dfc6ff; font-size:21px; }
+    .market-price-card small { display:block; margin-top:4px; }
+    .market-card-prices { display:flex; flex-direction:column; gap:4px; margin:13px 0 6px; color:#d4c0f0; font-size:13px; font-weight:800; }
+    .market-card-prices span { display:block; }
+    .market-card-prices small { color:var(--muted); font-size:10px; font-weight:600; letter-spacing:.4px; }
+    .market-card-prices .not-listed { color:#8b8496; font-weight:600; }
+    .detail-content { padding:18px 28px 28px; border-top:1px solid #2c3851; }
+    .detail-section-title { color:#9dadd0; font-size:11px; font-weight:800; letter-spacing:1.5px; margin-bottom:12px; }
+    .detail-info-list { display:grid; }
+    .detail-info-list div { display:flex; justify-content:space-between; gap:20px; padding:12px 0; border-bottom:1px solid rgba(139,157,190,.12); }
+    .detail-info-list span { color:#91a0bd; }
+    .detail-info-list strong { text-align:right; }
+    .seller-listings { margin-top:22px; padding:16px; border:1px solid #2c3a55; border-radius:15px; background:rgba(8,14,27,.38); }
+    .seller-listings-heading { display:flex; justify-content:space-between; align-items:center; gap:12px; color:#9dadd0; font-size:11px; font-weight:800; letter-spacing:1.4px; margin-bottom:13px; }
+    .seller-count { display:grid; place-items:center; min-width:25px; height:25px; border-radius:50%; color:#e6d4ff; background:#392653; letter-spacing:0; }
+    .no-sales { display:flex; align-items:center; gap:13px; padding:14px; border:1px dashed #394661; border-radius:12px; background:rgba(28,38,58,.55); }
+    .no-sales-mark { display:grid; place-items:center; flex:0 0 38px; height:38px; border-radius:11px; color:#c7b3e6; background:#29344b; font-size:23px; font-weight:800; }
+    .no-sales strong { display:block; color:#e6eaf4; font-size:14px; }
+    .no-sales small { display:block; margin-top:4px; color:#91a0bd; font-size:11px; }
+    .detail-note { color:#8d9ab4; font-size:12px; line-height:1.55; margin:17px 0; }
+    .favorite-btn, .auth-submit { width:100%; border:0; border-radius:12px; padding:13px 16px; background:linear-gradient(100deg,#8450cc,#6234a2); color:#fff; font-weight:800; cursor:pointer; box-shadow:0 7px 22px rgba(127,70,194,.22); }
+    .favorite-btn:hover, .auth-submit:hover { filter:brightness(1.12); }
+    .auth-dialog { width:min(640px,100%); padding:30px; }
+    .profile-dashboard { display:grid; gap:14px; margin-top:18px; }
+    .profile-card { padding:17px; border:1px solid #34415d; border-radius:15px; background:rgba(10,16,30,.58); }
+    .profile-card h3 { margin:0 0 12px; color:#e6d4ff; font-size:14px; letter-spacing:.7px; }
+    .profile-topline { display:flex; align-items:center; justify-content:space-between; gap:12px; }
+    .demo-pill { display:inline-flex; align-items:center; padding:5px 9px; border-radius:99px; color:#ffe4aa; background:#49371e; border:1px solid #795c2e; font-size:10px; font-weight:900; letter-spacing:1px; }
+    .wallet-balance { margin:8px 0 14px; color:#d9bdff; font-size:clamp(28px,6vw,38px); font-weight:900; letter-spacing:.3px; }
+    .wallet-form { display:flex; gap:9px; }
+    .wallet-form input, .seller-form input, .seller-form textarea { min-width:0; width:100%; padding:12px 13px; color:#fff; background:#0d1422; border:1px solid #34425e; border-radius:10px; outline:0; }
+    .wallet-form input:focus, .seller-form input:focus, .seller-form textarea:focus { border-color:#a66aff; box-shadow:0 0 0 3px rgba(166,106,255,.12); }
+    .wallet-form button, .seller-form button, .demo-access-button { flex:0 0 auto; border:0; border-radius:10px; padding:11px 15px; color:white; background:linear-gradient(100deg,#8450cc,#6234a2); font-weight:800; cursor:pointer; }
+    .profile-message { min-height:16px; margin:9px 0 0; color:#cbb2f0; font-size:11px; line-height:1.5; }
+    .profile-hint { margin:10px 0 0; color:#8290aa; font-size:11px; line-height:1.55; }
+    .profile-history { display:grid; gap:8px; }
+    .history-row { display:flex; justify-content:space-between; gap:12px; padding:9px 0; border-bottom:1px solid rgba(139,157,190,.12); font-size:12px; }
+    .history-row:last-child { border-bottom:0; }
+    .history-row small { display:block; margin-top:3px; color:#8290aa; font-size:10px; }
+    .history-amount { white-space:nowrap; color:#d9bdff; font-weight:800; }
+    .seller-status { display:inline-flex; margin:0 0 11px; padding:6px 10px; border-radius:9px; background:#29364e; color:#d8c7f0; font-size:11px; font-weight:800; }
+    .seller-status.approved { color:#b9f1d1; background:#163a31; }
+    .seller-status.rejected { color:#ffc1c1; background:#48252b; }
+    .seller-form { display:grid; gap:9px; }
+    .seller-form label { display:grid; gap:6px; color:#aebbd1; font-size:11px; }
+    .seller-form textarea { resize:vertical; min-height:70px; font:inherit; }
+    .seller-form button { width:100%; }
+    .demo-access { margin-top:12px; }
+    .demo-access-button { width:100%; background:#29364e; border:1px solid #4b5873; }
+    .profile-signout { margin-top:2px; }
+    @media (max-width:560px) {
+      .auth-dialog { padding:25px 18px; }
+      .wallet-form { flex-direction:column; }
+      .wallet-form button { width:100%; }
+    }
+    .auth-brand { color:white; letter-spacing:4px; font-size:13px; font-weight:900; }
+    .auth-brand span { color:#bd8aff; }
+    .auth-dialog h2 { margin:16px 0 6px; font-size:26px; }
+    .auth-subtitle { color:#9ba8c1; font-size:13px; line-height:1.5; margin:0 0 20px; }
+    .auth-tabs { display:grid; grid-template-columns:1fr 1fr; padding:4px; border-radius:12px; background:#0f1523; margin-bottom:18px; }
+    .auth-tab { border:0; padding:10px; border-radius:9px; color:#9ba8c1; background:transparent; cursor:pointer; font-weight:700; }
+    .auth-tab.active { color:white; background:#33314f; }
+    .auth-label { display:flex; flex-direction:column; gap:7px; margin:13px 0; color:#b5c0d5; font-size:12px; }
+    .auth-label input { width:100%; padding:13px 14px; border:1px solid #34425e; border-radius:10px; outline:0; color:white; background:#0d1422; }
+    .auth-label input:focus { border-color:#a66aff; box-shadow:0 0 0 3px rgba(166,106,255,.12); }
+    .password-input-row { display:flex; gap:8px; align-items:stretch; }
+    .password-input-row input { flex:1; min-width:0; }
+    .password-toggle { flex:0 0 auto; padding:0 12px; border:1px solid #34425e; border-radius:10px; color:#d9c5f5; background:#20243a; cursor:pointer; font-size:12px; }
+    .password-security { margin:-4px 0 13px; padding:11px 12px; border:1px solid #34415d; border-radius:10px; background:rgba(10,16,30,.5); }
+    .password-security[hidden] { display:none !important; }
+    .password-meter { height:6px; overflow:hidden; border-radius:99px; background:#293149; }
+    .password-meter-fill { width:0; height:100%; border-radius:99px; background:#e16c78; transition:width .18s ease, background .18s ease; }
+    .password-meter-label { display:block; margin-top:7px; color:#c9b6e2; font-size:11px; font-weight:700; }
+    .password-rules { display:grid; gap:5px; margin:9px 0 0; padding:0; list-style:none; color:#98a5bd; font-size:11px; }
+    .password-rules li::before { content:'○'; display:inline-block; width:16px; color:#91a0bd; }
+    .password-rules li.ok { color:#b8e7ca; }
+    .password-rules li.ok::before { content:'✓'; color:#70d69a; }
+    .password-match { min-height:14px; margin:-5px 0 10px; color:#98a5bd; font-size:11px; }
+    .password-match.ok { color:#8de0a9; }
+    .password-match.bad { color:#ff9ca7; }
+    .auth-submit { margin-top:10px; }
+    .auth-submit:disabled { opacity:.6; cursor:wait; }
+    .auth-message { color:#d6b7ff; font-size:12px; line-height:1.5; margin-top:12px; }
+    .signup-help { display:flex; align-items:center; justify-content:space-between; gap:12px; margin:14px 0 4px; padding:13px 14px; border:1px solid rgba(166,106,255,.32); border-radius:12px; background:linear-gradient(135deg,rgba(65,43,91,.48),rgba(22,26,45,.74)); color:#c6c0d7; font-size:12px; line-height:1.5; }
+    .signup-help[hidden] { display:none !important; }
+    .signup-help strong { display:block; color:#f1eaff; margin-bottom:3px; }
+    .signup-help a { flex:0 0 auto; display:inline-flex; align-items:center; gap:6px; padding:9px 11px; border:1px solid #7651a3; border-radius:9px; color:#fff; background:#392653; text-decoration:none; font-weight:800; white-space:nowrap; transition:.2s ease; }
+    .signup-help a:hover { border-color:#c49aff; background:#4a3069; box-shadow:0 0 16px rgba(166,106,255,.18); }
+    .email-delivery-note { margin:10px 0 4px; padding:11px 13px; border:1px solid rgba(214,179,94,.28); border-radius:11px; background:rgba(67,52,27,.28); color:#d8c9a7; font-size:11px; line-height:1.55; }
+    .email-delivery-note strong { display:block; margin-bottom:3px; color:#f0dcae; font-size:12px; }
+    .email-delivery-note[hidden] { display:none !important; }
+    @media (max-width:440px) { .signup-help { align-items:flex-start; flex-direction:column; } }
+    .auth-setup-hint { border-top:1px solid #2c3851; padding-top:14px; margin:17px 0 0; color:#8290aa; font-size:11px; line-height:1.6; }
+    .signed-in-label { color:#91a0bd; font-size:12px; margin:12px 0 6px; }
+    #signedInEmail { display:block; overflow-wrap:anywhere; }
+    .signout-btn { margin-top:20px; background:#29364e; }
+    [hidden] { display:none !important; }
+    @media (max-width:560px) {
+      .detail-heading { padding:24px 50px 18px 18px; gap:13px; }
+      .detail-art { flex-basis:82px; height:82px; border-radius:16px; }
+      .detail-mark { font-size:38px; }
+      .detail-price-row { gap:14px; }
+      .detail-price-row strong { font-size:17px; }
+      .detail-content { padding:16px 18px 20px; }
+      .auth-dialog { padding:28px 22px; }
+      .account-btn { padding:9px 13px; }
+    }
+
+    @media (max-width: 760px) { .grid { grid-template-columns: repeat(2, minmax(0,1fr)); } }
+    @media (max-width: 600px) {
+      .nav, main { padding-left: 16px; padding-right: 16px; }
+      .hero { padding-top: 44px; }
+      .top-controls { grid-template-columns: 1fr; }
+      .price-panel { grid-template-columns: 1fr; }
+      .price-values { white-space: normal; }
+      .range-wrap { gap: 12px; }
+    }
+    @media (max-width: 440px) { .grid { grid-template-columns: 1fr; } .filter-footer { align-items: flex-start; flex-direction: column; } .price-inputs { width: 100%; } }
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; } }
+
+
+    /* Нижняя панель навигации GODLYX */
+    body { padding-bottom: calc(94px + env(safe-area-inset-bottom, 0px)); }
+    .bottom-nav-wrap {
+      position: fixed;
+      z-index: 15;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      display: flex;
+      justify-content: center;
+      padding: 12px 16px calc(12px + env(safe-area-inset-bottom, 0px));
+      pointer-events: none;
+      background: linear-gradient(transparent, rgba(9,8,13,.78) 35%);
+    }
+    .bottom-nav {
+      pointer-events: auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 7px;
+      width: min(390px, 100%);
+      padding: 7px;
+      border: 1px solid rgba(177,122,255,.34);
+      border-radius: 19px;
+      background: rgba(20,15,29,.94);
+      box-shadow: 0 10px 38px rgba(0,0,0,.48), 0 0 24px rgba(166,106,255,.12);
+      backdrop-filter: blur(18px);
+    }
+    .bottom-nav-button {
+      display: flex;
+      min-height: 54px;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      border: 1px solid transparent;
+      border-radius: 13px;
+      color: #a99bb9;
+      background: transparent;
+      cursor: pointer;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: .35px;
+      transition: .2s ease;
+    }
+    .bottom-nav-button svg { width: 19px; height: 19px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+    .bottom-nav-button:hover { color: #fff; background: rgba(91,56,129,.24); }
+    .bottom-nav-button.active {
+      color: #f7f0ff;
+      border-color: rgba(177,122,255,.38);
+      background: linear-gradient(135deg, rgba(112,65,159,.52), rgba(61,37,86,.72));
+      box-shadow: inset 0 0 17px rgba(184,132,255,.08), 0 0 16px rgba(166,106,255,.10);
+    }
+    .bottom-nav-button.active svg { filter: drop-shadow(0 0 5px rgba(205,166,255,.6)); }
+    @media (min-width: 900px) {
+      .bottom-nav-wrap { padding-bottom: 18px; }
+      .bottom-nav { width: 340px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .bottom-nav-button { transition: none; }
+    }
+  </style>
+</head>
+<body class="page-enter">
+
+  <div class="monster-layer" aria-hidden="true">
+    <svg width="0" height="0" style="position:absolute">
+      <defs>
+        <linearGradient id="monsterPurple" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stop-color="#b879ff"/>
+          <stop offset="1" stop-color="#49216f"/>
+        </linearGradient>
+      </defs>
+    </svg>
+
+    <span class="bg-monster" style="--x:3%;--y:11%;--size:66px;--rotate:-13deg;--duration:38s;--delay:-2s">
+      <svg viewBox="0 0 88 88"><path class="body" d="M18 34C8 20 14 5 29 18C39 8 52 8 62 18C77 7 84 23 72 37C81 57 65 77 45 77C22 77 7 57 18 34Z"/><ellipse class="eye" cx="33" cy="42" rx="6" ry="9"/><ellipse class="eye" cx="57" cy="42" rx="6" ry="9"/><path class="mouth" d="M37 59Q45 65 53 58"/></svg>
+    </span>
+
+    <span class="bg-monster" style="--x:91%;--y:17%;--size:74px;--rotate:12deg;--duration:44s;--delay:-18s;--opacity:.19">
+      <svg viewBox="0 0 88 88"><path class="body" d="M21 31C5 12 17 4 34 19C42 12 52 12 59 19C76 4 85 15 69 33C80 55 65 76 44 76C22 76 8 55 21 31Z"/><path class="eye" d="M29 42Q39 31 41 46Q38 56 29 42Z"/><path class="eye" d="M48 46Q51 31 61 42Q54 56 48 46Z"/><path class="mouth" d="M36 61L41 56L45 62L50 56L54 60"/></svg>
+    </span>
+
+    <span class="bg-monster" style="--x:7%;--y:37%;--size:42px;--rotate:9deg;--duration:34s;--delay:-1s">
+      <svg viewBox="0 0 88 88"><path class="body" d="M18 32Q9 10 29 18Q43 4 57 18Q79 10 70 34Q82 61 57 73Q33 83 17 62Q7 47 18 32Z"/><circle class="eye" cx="34" cy="43" r="6"/><circle class="eye" cx="55" cy="43" r="6"/><path class="mouth" d="M36 59Q44 54 52 59"/></svg>
+    </span>
+
+    <span class="bg-monster" style="--x:94%;--y:44%;--size:50px;--rotate:-10deg;--duration:48s;--delay:-4s">
+      <svg viewBox="0 0 88 88"><path class="body" d="M17 35C3 17 19 7 32 21Q44 10 56 21C72 6 85 19 71 37Q79 65 53 75Q27 80 15 58Z"/><ellipse class="eye" cx="33" cy="44" rx="5" ry="8"/><ellipse class="eye" cx="55" cy="44" rx="5" ry="8"/><path class="mouth" d="M37 61Q44 65 51 61"/></svg>
+    </span>
+
+    <span class="bg-monster" style="--x:1%;--y:65%;--size:78px;--rotate:8deg;--duration:41s;--delay:-13s;--opacity:.13">
+      <svg viewBox="0 0 88 88"><path class="body" d="M19 30C6 16 17 2 32 18Q44 8 57 18C74 4 84 18 70 34C82 54 66 79 44 77C20 76 6 55 19 30Z"/><path class="eye" d="M27 43Q36 32 40 46Q37 55 27 43Z"/><path class="eye" d="M48 46Q52 32 62 43Q53 56 48 46Z"/><path class="mouth" d="M34 61L40 56L45 62L50 56L55 60"/></svg>
+    </span>
+
+    <span class="bg-monster" style="--x:88%;--y:73%;--size:61px;--rotate:15deg;--duration:36s;--delay:-3s">
+      <svg viewBox="0 0 88 88"><path class="body" d="M20 33Q8 13 29 18Q43 7 58 18Q79 8 69 35Q81 57 57 74Q35 84 17 62Q8 48 20 33Z"/><circle class="eye" cx="33" cy="43" r="6"/><circle class="eye" cx="55" cy="43" r="6"/><path class="mouth" d="M36 59Q44 66 52 59"/></svg>
+    </span>
+
+    <span class="bg-monster" style="--x:23%;--y:27%;--size:28px;--rotate:-18deg;--duration:46s;--delay:-16s;--opacity:.12">
+      <svg viewBox="0 0 88 88"><path class="body" d="M18 34L12 13L33 21Q44 12 56 21L76 13L70 37Q79 62 54 74Q29 80 16 58Z"/><circle class="eye" cx="34" cy="44" r="6"/><circle class="eye" cx="55" cy="44" r="6"/><path class="mouth" d="M38 60Q44 64 50 60"/></svg>
+    </span>
+
+    <span class="bg-monster" style="--x:76%;--y:31%;--size:34px;--rotate:19deg;--duration:39s;--delay:-7s;--opacity:.13">
+      <svg viewBox="0 0 88 88"><path class="body" d="M18 31Q7 13 30 19Q43 7 57 19Q81 11 70 36Q80 59 56 74Q31 81 17 59Z"/><ellipse class="eye" cx="33" cy="43" rx="5" ry="8"/><ellipse class="eye" cx="55" cy="43" rx="5" ry="8"/><path class="mouth" d="M36 59Q44 54 52 59"/></svg>
+    </span>
+
+    <span class="bg-monster" style="--x:14%;--y:87%;--size:46px;--rotate:-7deg;--duration:43s;--delay:-4s">
+      <svg viewBox="0 0 88 88"><path class="body" d="M18 33C7 15 20 6 33 19Q45 10 57 19C74 7 82 20 70 36Q79 60 55 74Q31 81 16 59Z"/><circle class="eye" cx="33" cy="43" r="6"/><circle class="eye" cx="55" cy="43" r="6"/><path class="mouth" d="M37 60L41 63L45 60L49 63L52 59"/></svg>
+    </span>
+
+    <span class="bg-monster" style="--x:81%;--y:91%;--size:31px;--rotate:11deg;--duration:35s;--delay:-28s;--opacity:.12">
+      <svg viewBox="0 0 88 88"><path class="body" d="M17 34Q8 14 30 19Q44 8 57 19Q78 10 70 36Q79 61 54 74Q30 79 16 59Z"/><ellipse class="eye" cx="33" cy="44" rx="5" ry="7"/><ellipse class="eye" cx="55" cy="44" rx="5" ry="7"/><path class="mouth" d="M36 59Q44 64 52 59"/></svg>
+    </span>
+
+    <span class="bg-monster" style="--x:34%;--size:38px;--rotate:-16deg;--duration:42s;--delay:-12s;--opacity:.18">
+      <svg viewBox="0 0 88 88"><path class="body" d="M18 34C8 20 14 5 29 18C39 8 52 8 62 18C77 7 84 23 72 37C81 57 65 77 45 77C22 77 7 57 18 34Z"/><ellipse class="eye" cx="33" cy="42" rx="6" ry="9"/><ellipse class="eye" cx="57" cy="42" rx="6" ry="9"/><path class="mouth" d="M37 59Q45 65 53 58"/></svg>
+    </span>
+    <span class="bg-monster" style="--x:64%;--size:52px;--rotate:13deg;--duration:47s;--delay:-26s;--opacity:.2">
+      <svg viewBox="0 0 88 88"><path class="body" d="M21 31C5 12 17 4 34 19C42 12 52 12 59 19C76 4 85 15 69 33C80 55 65 76 44 76C22 76 8 55 21 31Z"/><path class="eye" d="M29 42Q39 31 41 46Q38 56 29 42Z"/><path class="eye" d="M48 46Q51 31 61 42Q54 56 48 46Z"/><path class="mouth" d="M36 61L41 56L45 62L50 56L54 60"/></svg>
+    </span>
+    <span class="bg-monster" style="--x:47%;--size:30px;--rotate:8deg;--duration:33s;--delay:-19s;--opacity:.16">
+      <svg viewBox="0 0 88 88"><path class="body" d="M18 32Q9 10 29 18Q43 4 57 18Q79 10 70 34Q82 61 57 73Q33 83 17 62Q7 47 18 32Z"/><circle class="eye" cx="34" cy="43" r="6"/><circle class="eye" cx="55" cy="43" r="6"/><path class="mouth" d="M36 59Q44 54 52 59"/></svg>
+    </span>
+    <span class="bg-monster" style="--x:97%;--size:36px;--rotate:-9deg;--duration:45s;--delay:-32s;--opacity:.18">
+      <svg viewBox="0 0 88 88"><path class="body" d="M17 35C3 17 19 7 32 21Q44 10 56 21C72 6 85 19 71 37Q79 65 53 75Q27 80 15 58Z"/><ellipse class="eye" cx="33" cy="44" rx="5" ry="8"/><ellipse class="eye" cx="55" cy="44" rx="5" ry="8"/><path class="mouth" d="M37 61Q44 65 51 61"/></svg>
+    </span>
+  </div>
+
+  <header><div class="nav"><div class="brand">GODLY<span>X</span></div><div class="nav-spacer"></div><button class="account-btn" id="accountButton" type="button">Войти</button></div></header>
+  <main>
+    <section class="hero">
+      <div class="eyebrow">MURDER MYSTERY 2 • ITEM CATALOG</div>
+      <h1>GODLY<span>X</span> MARKET</h1>
+      <p>Discover knives, guns and rare collectibles.</p>
+    </section>
+
+    <section class="controls" aria-label="Фильтры каталога">
+      <div class="top-controls">
+        <input class="search" id="search" type="search" placeholder="Поиск по названию предмета..." autocomplete="off">
+        <select class="sort" id="sort" aria-label="Сортировка">
+          <option value="new">Сначала по списку</option>
+          <option value="asc">Сначала дешевле</option>
+          <option value="desc">Сначала дороже</option>
+        </select>
+      </div>
+      <div class="category-row" id="categories" aria-label="Категории">
+        <button class="category-button active" data-category="all" type="button">Все предметы</button>
+        <button class="category-button" data-category="knife" type="button">Ножи</button>
+        <button class="category-button" data-category="gun" type="button">Пистолеты</button>
+        <button class="category-button" data-category="pet" type="button">Питомцы</button>
+        <button class="category-button" data-category="other" type="button">Прочее</button>
+      </div>
+
+      <div class="advanced-filters">
+        <div class="filter-title">РЕДКОСТЬ</div>
+        <div class="chip-group" id="rarities">
+          <button class="filter-chip rarity-unique" type="button" data-rarity="Unique">Unique</button>
+          <button class="filter-chip rarity-ancient" type="button" data-rarity="Ancient">Ancient</button>
+          <button class="filter-chip rarity-godly" type="button" data-rarity="Godly">Godly</button>
+          <button class="filter-chip rarity-legendary" type="button" data-rarity="Legendary">Legendary</button>
+          <button class="filter-chip rarity-rare" type="button" data-rarity="Rare">Rare</button>
+          <button class="filter-chip rarity-uncommon" type="button" data-rarity="Uncommon">Uncommon</button>
+          <button class="filter-chip rarity-common" type="button" data-rarity="Common">Common</button>
+          <button class="filter-chip rarity-classic" type="button" data-rarity="Classic">Classic</button>
+          <button class="filter-chip rarity-christmas" type="button" data-rarity="Christmas">Christmas</button>
+          <button class="filter-chip rarity-halloween" type="button" data-rarity="Halloween">Halloween</button>
+        </div>
+        <div class="filter-title property-title">СВОЙСТВА</div>
+        <div class="chip-group"><button class="filter-chip chroma-chip" id="chromaToggle" type="button" aria-pressed="false"><span>Chroma</span></button></div>
+      </div>
+      <div class="price-panel">
+        <div class="price-heading">Цена · ₽</div>
+        <div class="price-values" id="priceLabel">0 ₽ — 1 000 ₽</div>
+        <div class="range-wrap">
+          <label class="range-control">МИНИМАЛЬНАЯ ЦЕНА<input id="minRange" type="range" min="0" max="1000" step="5" value="0"></label>
+          <label class="range-control">МАКСИМАЛЬНАЯ ЦЕНА<input id="maxRange" type="range" min="0" max="1000" step="5" value="1000"></label>
+        </div>
+        <div class="price-inputs">
+          <input class="price-number" id="minPrice" type="number" min="0" max="1000" value="0" aria-label="Цена от, рубли">
+          <input class="price-number" id="maxPrice" type="number" min="0" max="1000" value="1000" aria-label="Цена до, рубли">
+        </div>
+      </div>
+      <div class="filter-footer">
+        <div class="muted">ФИЛЬТР И СОРТИРОВКА ПО ЦЕНЕ · ЦЕНЫ В РУБЛЯХ</div>
+        <button class="reset" id="reset" type="button">Сбросить фильтры</button>
+      </div>
+    </section>
+
+    <div class="results" id="results" aria-live="polite"></div>
+    <section class="grid" id="items" aria-label="Предметы каталога"></section>
+  </main>
+
+  <div class="modal-backdrop" id="itemModal" aria-hidden="true">
+    <section class="detail-dialog" role="dialog" aria-modal="true" aria-labelledby="detailName">
+      <button class="modal-close" type="button" data-close="itemModal" aria-label="Закрыть">×</button>
+      <div class="detail-heading">
+        <div class="detail-art"><span class="detail-mark">G</span></div>
+        <div class="detail-title-wrap">
+          <div class="detail-kicker" id="detailKicker">GODLY • KNIFE</div>
+          <h2 id="detailName">Предмет</h2>
+          <div class="detail-price-row market-price-grid">
+            <div class="market-price-card"><strong id="detailDreamPrice">—</strong></div>
+          </div>
+        </div>
+      </div>
+      <div class="detail-content">
+        <div class="detail-section-title">ИНФОРМАЦИЯ О ПРЕДМЕТЕ</div>
+        <div class="detail-info-list">
+          <div><span>Категория</span><strong id="detailCategory">—</strong></div>
+          <div><span>Редкость</span><strong id="detailRarity">—</strong></div>
+          <div><span>Свойство</span><strong id="detailProperty">—</strong></div>
+          <div><span>Цена</span><strong>В рублях</strong></div>
+        </div>
+        <p class="detail-note market-source-note">Цена указана в рублях и может меняться. Если цена не найдена, это отмечено отдельно.</p>
+        <div class="seller-listings">
+          <div class="seller-listings-heading">
+            <span>ПРЕДЛОЖЕНИЯ ПРОДАВЦОВ</span>
+            <span class="seller-count" id="sellerCount">0</span>
+          </div>
+          <div class="no-sales" id="noSales">
+            <span class="no-sales-mark">—</span>
+            <div><strong>Продаж нет</strong><small>Пока никто не выставил этот предмет.</small></div>
+          </div>
+        </div>
+        <button class="favorite-btn" id="favoriteButton" type="button">☆ Добавить в избранное</button>
+      </div>
+    </section>
+  </div>
+
+  <div class="modal-backdrop" id="authModal" aria-hidden="true">
+    <section class="auth-dialog" role="dialog" aria-modal="true" aria-labelledby="authTitle">
+      <button class="modal-close" type="button" data-close="authModal" aria-label="Закрыть">×</button>
+      <div class="auth-brand">GODLY<span>X</span></div>
+      <h2 id="authTitle">Войти в аккаунт</h2>
+      <p class="auth-subtitle">Сохраняй избранные предметы и настройки каталога.</p>
+      <div class="auth-tabs">
+        <button class="auth-tab active" type="button" data-auth-mode="login">Вход</button>
+        <button class="auth-tab" type="button" data-auth-mode="signup">Регистрация</button>
+      </div>
+      <form id="authForm">
+        <label class="auth-label">Электронная почта<input id="authEmail" type="email" autocomplete="email" placeholder="you@example.com" required></label>
+        <label class="auth-label">Пароль
+          <span class="password-input-row">
+            <input id="authPassword" type="password" autocomplete="current-password" minlength="12" maxlength="128" placeholder="Не менее 12 символов" aria-describedby="passwordSecurity" required>
+            <button class="password-toggle" id="togglePassword" type="button" aria-label="Показать пароль" aria-pressed="false">Показать</button>
+          </span>
+        </label>
+        <div class="password-security" id="passwordSecurity" hidden>
+          <div class="password-meter" aria-hidden="true"><div class="password-meter-fill" id="passwordMeterFill"></div></div>
+          <span class="password-meter-label" id="passwordMeterLabel">Надёжность пароля</span>
+          <ul class="password-rules">
+            <li id="passwordLengthRule">Не менее 12 символов</li>
+            <li id="passwordCommonRule">Не использовать очевидный или распространённый пароль</li>
+            <li id="passwordEmailRule">Не использовать адрес почты или его часть</li>
+          </ul>
+        </div>
+        <label class="auth-label" id="confirmPasswordWrap" hidden>Повтори пароль<input id="authPasswordConfirm" type="password" autocomplete="new-password" minlength="12" maxlength="128" placeholder="Повтори пароль"></label>
+        <div class="password-match" id="passwordMatch" hidden aria-live="polite"></div>
+        <button class="auth-submit" id="authSubmit" type="submit">Войти</button>
+      </form>
+      <div class="email-delivery-note" id="emailDeliveryHint" hidden role="note">
+        <strong>Не пришло письмо с подтверждением?</strong>
+        Проверь папку «Спам». Если письмо всё ещё не пришло, подожди до 1 часа перед повторной отправкой — у почтового сервиса есть ограничение на количество писем.
+      </div>
+      <button class="auth-submit" id="resendConfirmationButton" type="button" hidden style="margin-top:10px;background:#29364e">Отправить письмо подтверждения повторно</button>
+      <div class="signup-help" id="signupHelp" hidden>
+        <div><strong>Не знаешь, как зарегистрироваться?</strong>Посмотри нашу инструкцию в Telegram.</div>
+        <a href="https://t.me/godlyxmarket" target="_blank" rel="noopener noreferrer">Открыть инструкцию <span aria-hidden="true">↗</span></a>
+      </div>
+      <div class="demo-access" id="demoAccess" hidden>
+        <button class="demo-access-button" id="demoAccessButton" type="button">Открыть демо-профиль</button>
+      </div>
+      <div class="auth-message" id="authMessage" role="status"></div>
+      <div class="account-state" id="accountState" hidden>
+        <div class="signed-in-label">Вы вошли как</div>
+        <strong id="signedInEmail"></strong>
+        <div class="profile-dashboard" id="profileDashboard" hidden>
+          <section class="profile-card">
+            <div class="profile-topline">
+              <h3>МОЙ БАЛАНС</h3>
+              <span class="demo-pill" id="walletModeBadge" hidden>ДЕМО РЕЖИМ</span>
+            </div>
+            <div class="wallet-balance" id="profileBalance">0 ₽</div>
+            <form class="wallet-form" id="topupForm">
+              <input id="topupAmount" type="number" min="50" max="20000" step="50" value="100" inputmode="numeric" aria-label="Сумма пополнения в рублях" required>
+              <button id="topupButton" type="submit">Пополнить</button>
+            </form>
+            <p class="profile-message" id="topupMessage" role="status"></p>
+            <p class="profile-hint" id="walletHint">Минимальное пополнение — 50 ₽. Перед реальным запуском нужно подключить платёжного провайдера и серверное подтверждение оплаты.</p>
+          </section>
+          <section class="profile-card">
+            <h3>ИСТОРИЯ ОПЕРАЦИЙ</h3>
+            <div class="profile-history" id="walletHistory"><div class="profile-hint">Операций пока нет.</div></div>
+          </section>
+          <section class="profile-card">
+            <h3>СТАТЬ ПРОДАВЦОМ</h3>
+            <div class="seller-status" id="sellerStatus">Заявка не отправлена</div>
+            <p class="profile-hint" id="sellerStatusText">Укажи свой Roblox-ник. Заявка попадёт на проверку администраторам GODLYX.</p>
+            <form class="seller-form" id="sellerForm">
+              <label>Roblox username<input id="sellerRobloxUsername" type="text" minlength="3" maxlength="20" pattern="[A-Za-z0-9_]{3,20}" placeholder="Например, Player_001" autocomplete="off" required></label>
+              <label>Комментарий (необязательно)<textarea id="sellerNote" maxlength="300" placeholder="Расскажи немного о своём магазине"></textarea></label>
+              <button id="sellerSubmit" type="submit">Отправить заявку продавца</button>
+            </form>
+            <p class="profile-message" id="sellerMessage" role="status"></p>
+          </section>
+        </div>
+        <button class="auth-submit signout-btn profile-signout" id="signOutButton" type="button">Выйти из аккаунта</button>
+      </div>
+      <p class="auth-setup-hint" id="authSetupHint">Регистрация подключена к Supabase. Аккаунт сохраняется в Supabase Auth; для постоянного профиля, кошелька и заявок продавцов выполни SQL-настройку GODLYX_supabase_setup.sql. Пароли не хранятся в этом HTML.</p>
+    </section>
+  </div>
+<nav class="bottom-nav-wrap" aria-label="Основная навигация">
+    <div class="bottom-nav">
+      <button class="bottom-nav-button active" id="homeNavButton" type="button" aria-current="page">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 10 9-7 9 7"></path><path d="M5 9.5V21h14V9.5"></path><path d="M9 21v-7h6v7"></path></svg>
+        <span>Главная</span>
+      </button>
+      <button class="bottom-nav-button" id="profileNavButton" type="button">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"></circle><path d="M4.5 21a7.5 7.5 0 0 1 15 0"></path></svg>
+        <span>Профиль</span>
+      </button>
+    </div>
+  </nav>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    'use strict';
+    // Price snapshot in rubles.
+    // Null means that no matching listing was confirmed in the inspected catalog results.
+    const items = [
+      {name:'Chroma Gemstone',dreamPetsPrice:null,rarity:'Godly',category:'knife',chroma:true},
+      {name:'Eternal IV',dreamPetsPrice:28.89,rarity:'Godly',category:'knife'},
+      {name:'Luger',dreamPetsPrice:72.00,rarity:'Godly',category:'gun'},
+      {name:'Fang',dreamPetsPrice:34.99,rarity:'Godly',category:'knife'},
+      {name:'Heartblade',dreamPetsPrice:197.99,rarity:'Godly',category:'knife'},
+      {name:'Shark',dreamPetsPrice:61.99,rarity:'Godly',category:'gun'},
+      {name:'Chroma Luger',dreamPetsPrice:null,rarity:'Godly',category:'gun',chroma:true},
+      {name:'Chroma Fang',dreamPetsPrice:null,rarity:'Godly',category:'knife',chroma:true},
+      {name:'Candy',dreamPetsPrice:234.99,rarity:'Godly',category:'knife'},
+      {name:'Sugar',dreamPetsPrice:105.87,rarity:'Godly',category:'gun'},
+      {name:'Red Seer',dreamPetsPrice:34.98,rarity:'Godly',category:'knife'},
+      {name:'Blue Seer',dreamPetsPrice:34.44,rarity:'Godly',category:'knife'},
+      {name:'Lightbringer',dreamPetsPrice:98.99,rarity:'Godly',category:'gun'},
+      {name:'Darkbringer',dreamPetsPrice:99.99,rarity:'Godly',category:'gun'},
+      {name:'Elderwood Scythe',dreamPetsPrice:119.99,rarity:'Ancient',category:'knife'},
+      {name:'Icebreaker',dreamPetsPrice:174.97,rarity:'Ancient',category:'knife'},
+      {name:'Battle Axe II',dreamPetsPrice:null,rarity:'Godly',category:'knife'},
+      {name:'Pixel',dreamPetsPrice:null,rarity:'Godly',category:'knife'},
+      {name:'Slasher',dreamPetsPrice:54.99,rarity:'Godly',category:'knife'},
+      {name:'Laser',dreamPetsPrice:77.00,rarity:'Godly',category:'gun'},
+      {name:'Nebula',dreamPetsPrice:null,rarity:'Godly',category:'gun'},
+      {name:'Bioblade',dreamPetsPrice:38.96,rarity:'Godly',category:'knife'},
+      {name:'Seer',dreamPetsPrice:31.97,rarity:'Godly',category:'knife'},
+      {name:'Prismatic',dreamPetsPrice:null,rarity:'Godly',category:'knife'},
+      {name:'Deathshard',dreamPetsPrice:34.99,rarity:'Godly',category:'knife'},
+      {name:'Amerilaser',dreamPetsPrice:97.00,rarity:'Godly',category:'gun'},
+      {name:'Blaster',dreamPetsPrice:53.49,rarity:'Godly',category:'gun'},
+      {name:'Waves',dreamPetsPrice:null,rarity:'Godly',category:'knife'},
+      {name:'Candleflame',dreamPetsPrice:null,rarity:'Godly',category:'knife'},
+      {name:'Swirly Axe',dreamPetsPrice:99.99,rarity:'Ancient',category:'knife'},
+      {name:'Dog',dreamPetsPrice:null,rarity:'Common',category:'pet'},
+      {name:'Cat',dreamPetsPrice:null,rarity:'Common',category:'pet'},
+      {name:'Fox',dreamPetsPrice:null,rarity:'Uncommon',category:'pet'},
+      {name:'Ice Phoenix',dreamPetsPrice:null,rarity:'Godly',category:'pet'}
+    ];
+
+
+    const state = { category: 'all', rarities: new Set(), chromaOnly: false, selectedItem: null };
+    const $ = (id) => document.getElementById(id);
+    const formatRubles = (value) => value == null ? 'Не найдено' : `${Number(value).toLocaleString('ru-RU',{minimumFractionDigits:0,maximumFractionDigits:2})} ₽`;
+    const formatCardPrices = (item) => `<div class="market-card-prices"><span>${item.dreamPetsPrice == null ? '—' : formatRubles(item.dreamPetsPrice)}</span></div>`;
+    const categoryNames = {knife:'Нож',gun:'Пистолет',pet:'Питомец',other:'Прочее'};
+    const favorites = new Set(JSON.parse(localStorage.getItem('godlyx_favorites') || '[]'));
+
+    function getPriceBounds() {
+      let min = Math.max(0, Math.min(1000, Number($('minPrice').value) || 0));
+      let maxRaw = $('maxPrice').value;
+      let max = maxRaw === '' ? 1000 : Math.max(0, Math.min(1000, Number(maxRaw)));
+      if (min > max) min = max;
+      return {min, max};
+    }
+
+    function syncPriceControls(changedBy) {
+      let min = Number($('minRange').value), max = Number($('maxRange').value);
+      if (min > max) { if (changedBy === 'min') max = min; else min = max; }
+      $('minRange').value = String(min); $('maxRange').value = String(max);
+      $('minPrice').value = String(min); $('maxPrice').value = String(max);
+      $('priceLabel').textContent = `${formatRubles(min)} — ${formatRubles(max)}`;
+      render();
+    }
+
+    function syncNumberControls(changedBy) {
+      let min = $('minPrice').value === '' ? 0 : Math.max(0, Math.min(1000, Number($('minPrice').value)));
+      let max = $('maxPrice').value === '' ? 1000 : Math.max(0, Math.min(1000, Number($('maxPrice').value)));
+      if (min > max) { if (changedBy === 'min') max = min; else min = max; }
+      $('minPrice').value = String(min); $('maxPrice').value = String(max);
+      $('minRange').value = String(min); $('maxRange').value = String(max);
+      $('priceLabel').textContent = `${formatRubles(min)} — ${formatRubles(max)}`;
+      render();
+    }
+
+    function render() {
+      const query = $('search').value.trim().toLocaleLowerCase('ru');
+      const sort = $('sort').value;
+      const {min, max} = getPriceBounds();
+      let filtered = items.filter(item =>
+        item.name.toLocaleLowerCase('ru').includes(query) &&
+        (state.category === 'all' || item.category === state.category) &&
+        (state.rarities.size === 0 || state.rarities.has(item.rarity)) &&
+        (!state.chromaOnly || item.chroma === true) &&
+        (item.dreamPetsPrice == null ? min === 0 : item.dreamPetsPrice >= min && item.dreamPetsPrice <= max)
+      );
+      const comparePrice = (a, b) => {
+        if (a.dreamPetsPrice == null && b.dreamPetsPrice == null) return 0;
+        if (a.dreamPetsPrice == null) return 1;
+        if (b.dreamPetsPrice == null) return -1;
+        return a.dreamPetsPrice - b.dreamPetsPrice;
+      };
+      if (sort === 'asc') filtered.sort(comparePrice);
+      if (sort === 'desc') filtered.sort((a,b) => comparePrice(b,a));
+      $('results').textContent = `НАЙДЕНО ПРЕДМЕТОВ: ${filtered.length}`;
+      $('items').innerHTML = filtered.length ? filtered.map((item, index) => `
+        <article class="card" style="--stagger:${index}" role="button" tabindex="0" data-item="${escapeHtml(item.name)}" aria-label="Открыть ${escapeHtml(item.name)}">
+          <div class="thumb"><span class="item-mark">G</span></div>
+          <div class="cardbody">
+            <h3>${escapeHtml(item.name)}</h3>
+            <span class="tag">${escapeHtml(item.rarity)}</span>
+            ${item.chroma ? '<span class="tag chroma-tag">Chroma</span>' : ''}
+            ${formatCardPrices(item)}
+            <div class="muted">${categoryNames[item.category].toUpperCase()}</div>
+          </div>
+        </article>`).join('') : '<div class="empty">Ничего не найдено. Измени категорию, редкость или диапазон цены.</div>';
+    }
+
+    function escapeHtml(value) {
+      return String(value).replace(/[&<>"']/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
+    }
+    function showModal(id) {
+      $(id).classList.add('open'); $(id).setAttribute('aria-hidden','false');
+      document.body.classList.add('modal-open');
+    }
+    function closeModal(id) {
+      $(id).classList.remove('open'); $(id).setAttribute('aria-hidden','true');
+      if (!document.querySelector('.modal-backdrop.open')) document.body.classList.remove('modal-open');
+    }
+    function openItem(name) {
+      const item = items.find(entry => entry.name === name);
+      if (!item) return;
+      state.selectedItem = item;
+      $('detailName').textContent = item.name;
+      $('detailDreamPrice').textContent = formatRubles(item.dreamPetsPrice);
+      $('detailKicker').textContent = `${item.rarity.toUpperCase()} • ${categoryNames[item.category].toUpperCase()}`;
+      $('detailCategory').textContent = categoryNames[item.category];
+      $('detailRarity').textContent = item.rarity;
+      $('detailProperty').textContent = item.chroma ? 'Chroma' : '—';
+      $('favoriteButton').textContent = favorites.has(item.name) ? '★ В избранном' : '☆ Добавить в избранное';
+      showModal('itemModal');
+    }
+
+    const COMMON_WEAK_PASSWORDS = new Set([
+      'password123', 'password1234', 'qwerty123456', '123456789012',
+      'abcdefgh1234', 'admin123456', 'iloveyou1234', 'welcome12345'
+    ]);
+
+    function getPasswordChecks(password, email) {
+      const normalized = password.toLocaleLowerCase();
+      const emailName = String(email || '').split('@')[0].trim().toLocaleLowerCase();
+      const lengthOk = [...password].length >= 12;
+      const commonOk = !COMMON_WEAK_PASSWORDS.has(normalized) && !/(.)\1{5,}/u.test(password);
+      const emailOk = !emailName || emailName.length < 4 || !normalized.includes(emailName);
+      return {lengthOk, commonOk, emailOk, valid: lengthOk && commonOk && emailOk};
+    }
+
+    function updatePasswordFeedback() {
+      const password = $('authPassword').value;
+      const email = $('authEmail').value;
+      const checks = getPasswordChecks(password, email);
+      const signup = $('authForm').dataset.mode === 'signup';
+      $('passwordSecurity').hidden = !signup;
+      $('passwordMatch').hidden = !signup || !$('authPasswordConfirm').value;
+
+      $('passwordLengthRule').classList.toggle('ok', checks.lengthOk);
+      $('passwordCommonRule').classList.toggle('ok', checks.commonOk && password.length > 0);
+      $('passwordEmailRule').classList.toggle('ok', checks.emailOk && password.length > 0);
+
+      let score = 0;
+      if (checks.lengthOk) score += 2;
+      if ([...password].length >= 16) score += 1;
+      if ([...new Set(password)].length >= 8) score += 1;
+      if (/[a-z]/.test(password) && /[A-Z]/.test(password)) score += 1;
+      if (/\d/.test(password)) score += 1;
+      if (/[^A-Za-z0-9]/.test(password)) score += 1;
+      if (!checks.commonOk || !checks.emailOk) score = Math.min(score, 1);
+      const percent = password.length ? Math.min(100, Math.round(score / 7 * 100)) : 0;
+      $('passwordMeterFill').style.width = `${percent}%`;
+      $('passwordMeterFill').style.background = score >= 6 ? '#70d69a' : score >= 4 ? '#d6b35e' : '#e16c78';
+      $('passwordMeterLabel').textContent = !password ? 'Надёжность пароля' : score >= 6 ? 'Надёжный пароль' : score >= 4 ? 'Средний пароль — можно усилить' : 'Слабый пароль';
+
+      const confirm = $('authPasswordConfirm').value;
+      if (signup && confirm) {
+        const match = password === confirm;
+        $('passwordMatch').textContent = match ? 'Пароли совпадают.' : 'Пароли пока не совпадают.';
+        $('passwordMatch').className = `password-match ${match ? 'ok' : 'bad'}`;
+      }
+      return checks;
+    }
+
+    function setAuthMode(mode) {
+      const signup = mode === 'signup';
+      $('authTitle').textContent = signup ? 'Создать аккаунт' : 'Войти в аккаунт';
+      $('authSubmit').textContent = signup ? 'Зарегистрироваться' : 'Войти';
+      $('confirmPasswordWrap').hidden = !signup;
+      $('signupHelp').hidden = !signup;
+      $('emailDeliveryHint').hidden = !signup;
+      $('resendConfirmationButton').hidden = !signup;
+      $('passwordSecurity').hidden = !signup;
+      $('passwordMatch').hidden = !signup || !$('authPasswordConfirm').value;
+      $('authPassword').autocomplete = signup ? 'new-password' : 'current-password';
+      $('authPassword').minLength = signup ? 12 : 1;
+      $('authPasswordConfirm').required = signup;
+      $('authPasswordConfirm').minLength = 12;
+      document.querySelectorAll('[data-auth-mode]').forEach(btn => btn.classList.toggle('active', btn.dataset.authMode === mode));
+      $('authMessage').textContent = '';
+      $('authForm').dataset.mode = mode;
+      updatePasswordFeedback();
+    }
+
+    // В режиме DEMO баланс и заявки сохраняются только в этом браузере.
+    // Для реального запуска поменяй DEMO_MODE на false после настройки Supabase и сервера платежей.
+    const DEMO_MODE = true;
+    const SUPABASE_URL = 'https://dtfytwuyfntiadetnbvx.supabase.co';
+    const SUPABASE_ANON_KEY = 'sb_publishable_2l3q9bZT-ZEzsrAUoVwEUw_wkEvgD3E';
+    let authClient = null;
+    let currentUser = null;
+    let isDemoUser = false;
+    if (window.supabase && SUPABASE_URL.startsWith('https://') && !SUPABASE_URL.includes('ВСТАВЬТЕ') && !SUPABASE_ANON_KEY.includes('ВСТАВЬТЕ')) {
+      authClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    }
+
+    const demoStorageKey = (userId) => `godlyx_demo_profile_v1_${userId}`;
+    function readDemoData(userId) {
+      try {
+        return JSON.parse(localStorage.getItem(demoStorageKey(userId)) || '{"balance_kopeks":0,"transactions":[],"application":null}');
+      } catch (_) {
+        return {balance_kopeks:0, transactions:[], application:null};
+      }
+    }
+    function writeDemoData(userId, data) {
+      localStorage.setItem(demoStorageKey(userId), JSON.stringify(data));
+    }
+    const rublesFromKopeks = (kopeks) => formatRubles(Number(kopeks || 0) / 100);
+
+    function renderWalletHistory(rows) {
+      const host = $('walletHistory');
+      if (!rows || !rows.length) {
+        host.innerHTML = '<div class="profile-hint">Операций пока нет.</div>';
+        return;
+      }
+      host.innerHTML = rows.slice(0, 8).map(row => {
+        const typeNames = {topup:'Пополнение', purchase:'Покупка', refund:'Возврат', adjustment:'Изменение баланса'};
+        const statusNames = {paid:'Успешно', pending:'Ожидает', failed:'Не выполнено', demo:'ДЕМО'};
+        const amount = Number(row.amount_kopeks || 0) / 100;
+        const sign = amount > 0 ? '+' : '';
+        const date = row.created_at ? new Date(row.created_at).toLocaleDateString('ru-RU') : 'Только что';
+        const title = typeNames[row.transaction_type] || 'Операция';
+        const status = statusNames[row.status] || row.status || '';
+        return `<div class="history-row"><div>${escapeHtml(title)}<small>${escapeHtml(date)} · ${escapeHtml(status)}</small></div><div class="history-amount">${sign}${formatRubles(amount)}</div></div>`;
+      }).join('');
+    }
+
+    function renderSellerApplication(application) {
+      const status = application?.status || 'none';
+      const labels = {none:'Заявка не отправлена', pending:'На проверке', approved:'Продавец одобрен', rejected:'Нужно исправить заявку'};
+      $('sellerStatus').textContent = labels[status] || 'Статус неизвестен';
+      $('sellerStatus').classList.toggle('approved', status === 'approved');
+      $('sellerStatus').classList.toggle('rejected', status === 'rejected');
+      $('sellerForm').hidden = status === 'pending' || status === 'approved';
+      $('sellerRobloxUsername').value = application?.roblox_username || '';
+      $('sellerNote').value = application?.note || '';
+      $('sellerStatusText').textContent = status === 'approved'
+        ? `Заявка ${application.roblox_username ? `для ${application.roblox_username} ` : ''}одобрена. Теперь аккаунт отмечен как продавец.`
+        : status === 'pending'
+          ? `Заявка ${application.roblox_username ? `для ${application.roblox_username} ` : ''}отправлена. Дождись проверки администратора.`
+          : status === 'rejected'
+            ? 'Предыдущая заявка отклонена. Проверь Roblox-ник и отправь её ещё раз.'
+            : 'Укажи свой Roblox-ник. Заявка попадёт на проверку администраторам GODLYX.';
+    }
+
+    async function refreshProfileData(user = currentUser) {
+      if (!user) return;
+      $('profileDashboard').hidden = false;
+      $('walletModeBadge').hidden = !DEMO_MODE;
+      if (DEMO_MODE || isDemoUser) {
+        const demo = readDemoData(user.id);
+        $('profileBalance').textContent = rublesFromKopeks(demo.balance_kopeks);
+        renderWalletHistory(demo.transactions);
+        renderSellerApplication(demo.application);
+        $('walletHint').textContent = 'Демо-режим: баланс и история хранятся только в этом браузере. Это не реальные деньги и не синхронизируется с другими устройствами.';
+        $('topupMessage').textContent = 'Можно проверить интерфейс. Пополнение здесь условное.';
+        return;
+      }
+      if (!authClient) return;
+      $('topupMessage').textContent = 'Загружаю баланс…';
+      try {
+        const [walletResult, transactionsResult, applicationResult] = await Promise.all([
+          authClient.from('wallets').select('balance_kopeks').eq('user_id', user.id).maybeSingle(),
+          authClient.from('wallet_transactions').select('amount_kopeks,transaction_type,status,created_at').eq('user_id', user.id).order('created_at', {ascending:false}).limit(8),
+          authClient.from('seller_applications').select('status,roblox_username,note,created_at').eq('user_id', user.id).order('created_at', {ascending:false}).limit(1)
+        ]);
+        if (walletResult.error) throw walletResult.error;
+        if (transactionsResult.error) throw transactionsResult.error;
+        if (applicationResult.error) throw applicationResult.error;
+        $('profileBalance').textContent = rublesFromKopeks(walletResult.data?.balance_kopeks || 0);
+        renderWalletHistory(transactionsResult.data || []);
+        renderSellerApplication((applicationResult.data || [])[0] || null);
+        $('topupMessage').textContent = '';
+        $('walletHint').textContent = 'После оплаты баланс обновится только после подтверждения платежа сервером.';
+      } catch (error) {
+        $('topupMessage').textContent = 'Не удалось загрузить профиль. Проверь, что SQL-настройка Supabase выполнена.';
+        console.error('GODLYX profile:', error);
+      }
+    }
+
+    function updateAuthUI(user, demo = false) {
+      currentUser = user || null;
+      isDemoUser = Boolean(demo);
+      const signedIn = Boolean(user);
+      $('accountButton').textContent = signedIn ? 'Мой профиль' : 'Войти';
+      $('authForm').hidden = signedIn;
+      document.querySelector('.auth-tabs').hidden = signedIn;
+      $('signupHelp').hidden = signedIn || $('authForm').dataset.mode !== 'signup';
+      $('authSetupHint').hidden = signedIn;
+      $('demoAccess').hidden = signedIn || !DEMO_MODE || Boolean(authClient);
+      $('accountState').hidden = !signedIn;
+      $('signedInEmail').textContent = user ? (demo ? 'DEMO-профиль (локально)' : user.email || 'Аккаунт GODLYX') : '';
+      $('profileDashboard').hidden = !signedIn;
+      if (signedIn) {
+        $('authTitle').textContent = 'Профиль GODLYX';
+        refreshProfileData(user);
+      } else {
+        $('authTitle').textContent = 'Войти в аккаунт';
+      }
+    }
+
+    // Показываем понятную подсказку, если пользователь вернулся по просроченной ссылке.
+    const authRedirectParams = new URLSearchParams(window.location.hash.replace(/^#/, ''));
+    if (authRedirectParams.get('error_code') === 'otp_expired') {
+      setAuthMode('signup');
+      $('authMessage').textContent = 'Ссылка подтверждения уже использована или устарела. Введи почту и нажми «Отправить письмо подтверждения повторно».';
+      showModal('authModal');
+      window.history.replaceState(null, document.title, window.location.pathname + window.location.search);
+    }
+
+    $('categories').addEventListener('click', event => {
+      const button = event.target.closest('button[data-category]');
+      if (!button) return;
+      state.category = button.dataset.category;
+      document.querySelectorAll('.category-button').forEach(el => el.classList.toggle('active', el === button));
+      render();
+    });
+    $('rarities').addEventListener('click', event => {
+      const button = event.target.closest('button[data-rarity]');
+      if (!button) return;
+      const rarity = button.dataset.rarity;
+      if (state.rarities.has(rarity)) state.rarities.delete(rarity); else state.rarities.add(rarity);
+      button.classList.toggle('active', state.rarities.has(rarity));
+      render();
+    });
+    $('chromaToggle').addEventListener('click', () => {
+      state.chromaOnly = !state.chromaOnly;
+      $('chromaToggle').classList.toggle('active', state.chromaOnly);
+      $('chromaToggle').setAttribute('aria-pressed', String(state.chromaOnly));
+      render();
+    });
+    $('items').addEventListener('click', event => {
+      const card = event.target.closest('[data-item]');
+      if (card) openItem(card.dataset.item);
+    });
+    $('items').addEventListener('keydown', event => {
+      if ((event.key === 'Enter' || event.key === ' ') && event.target.matches('[data-item]')) {
+        event.preventDefault(); openItem(event.target.dataset.item);
+      }
+    });
+    $('favoriteButton').addEventListener('click', () => {
+      if (!state.selectedItem) return;
+      const name = state.selectedItem.name;
+      if (favorites.has(name)) favorites.delete(name); else favorites.add(name);
+      localStorage.setItem('godlyx_favorites', JSON.stringify([...favorites]));
+      $('favoriteButton').textContent = favorites.has(name) ? '★ В избранном' : '☆ Добавить в избранное';
+    });
+    document.querySelectorAll('[data-close]').forEach(button => button.addEventListener('click', () => closeModal(button.dataset.close)));
+    document.querySelectorAll('.modal-backdrop').forEach(backdrop => backdrop.addEventListener('click', event => {
+      if (event.target === backdrop) closeModal(backdrop.id);
+    }));
+    document.addEventListener('keydown', event => {
+      if (event.key === 'Escape') document.querySelectorAll('.modal-backdrop.open').forEach(modal => closeModal(modal.id));
+    });
+
+    function setBottomNavActive(page) {
+      const isHome = page === 'home';
+      $('homeNavButton').classList.toggle('active', isHome);
+      $('profileNavButton').classList.toggle('active', !isHome);
+      if (isHome) {
+        $('homeNavButton').setAttribute('aria-current', 'page');
+        $('profileNavButton').removeAttribute('aria-current');
+      } else {
+        $('profileNavButton').setAttribute('aria-current', 'page');
+        $('homeNavButton').removeAttribute('aria-current');
+      }
+    }
+
+    function openProfile() {
+      setBottomNavActive('profile');
+      showModal('authModal');
+      if (currentUser) {
+        updateAuthUI(currentUser, isDemoUser);
+        return;
+      }
+      setAuthMode('login');
+      if (authClient) {
+        authClient.auth.getUser()
+          .then(({data, error}) => {
+            if (error) throw error;
+            updateAuthUI(data.user);
+          })
+          .catch(error => { $('authMessage').textContent = error.message || 'Не удалось загрузить профиль.'; });
+      } else {
+        updateAuthUI(null);
+      }
+    }
+
+    $('homeNavButton').addEventListener('click', () => {
+      setBottomNavActive('home');
+      window.scrollTo({top: 0, behavior: 'smooth'});
+    });
+    $('profileNavButton').addEventListener('click', openProfile);
+    $('accountButton').addEventListener('click', openProfile);
+    document.querySelectorAll('[data-auth-mode]').forEach(button => button.addEventListener('click', () => setAuthMode(button.dataset.authMode)));
+    $('demoAccessButton').addEventListener('click', () => {
+      const demoUser = {id:'godlyx-local-demo-user', email:'demo@godlyx.local'};
+      updateAuthUI(demoUser, true);
+      $('authMessage').textContent = 'Открыт локальный демо-профиль. Никакие реальные платежи не выполняются.';
+    });
+
+    $('topupForm').addEventListener('submit', async event => {
+      event.preventDefault();
+      if (!currentUser) {
+        $('topupMessage').textContent = 'Сначала войди в аккаунт.';
+        return;
+      }
+      const amount = Number($('topupAmount').value);
+      if (!Number.isInteger(amount) || amount < 50 || amount > 20000 || amount % 50 !== 0) {
+        $('topupMessage').textContent = 'Введи сумму от 50 до 20 000 ₽, кратную 50.';
+        return;
+      }
+      $('topupButton').disabled = true;
+      $('topupButton').textContent = 'Обработка…';
+      try {
+        if (DEMO_MODE || isDemoUser) {
+          const demo = readDemoData(currentUser.id);
+          demo.balance_kopeks = Number(demo.balance_kopeks || 0) + amount * 100;
+          demo.transactions = [{amount_kopeks:amount*100,transaction_type:'topup',status:'demo',created_at:new Date().toISOString()}, ...(demo.transactions || [])].slice(0,20);
+          writeDemoData(currentUser.id, demo);
+          await refreshProfileData(currentUser);
+          $('topupMessage').textContent = `ДЕМО: условно добавлено ${formatRubles(amount)}. Реальная оплата не проводилась.`;
+        } else {
+          if (!authClient) throw new Error('Сначала подключи Supabase.');
+          const {data, error} = await authClient.functions.invoke('create-topup', {body:{amount_rub:amount}});
+          if (error) throw error;
+          if (!data?.checkout_url) throw new Error('Сервер не вернул ссылку на оплату. Платёжный провайдер ещё не настроен.');
+          window.location.assign(data.checkout_url);
+        }
+      } catch (error) {
+        $('topupMessage').textContent = error.message || 'Не удалось начать пополнение.';
+      } finally {
+        $('topupButton').disabled = false;
+        $('topupButton').textContent = 'Пополнить';
+      }
+    });
+
+    $('sellerForm').addEventListener('submit', async event => {
+      event.preventDefault();
+      if (!currentUser) {
+        $('sellerMessage').textContent = 'Сначала войди в аккаунт.';
+        return;
+      }
+      const robloxUsername = $('sellerRobloxUsername').value.trim();
+      const note = $('sellerNote').value.trim();
+      if (!/^[A-Za-z0-9_]{3,20}$/.test(robloxUsername)) {
+        $('sellerMessage').textContent = 'Roblox username должен содержать 3–20 символов: латинские буквы, цифры или _.';
+        return;
+      }
+      $('sellerSubmit').disabled = true;
+      $('sellerSubmit').textContent = 'Отправка…';
+      try {
+        if (DEMO_MODE || isDemoUser) {
+          const demo = readDemoData(currentUser.id);
+          demo.application = {status:'pending',roblox_username:robloxUsername,note,created_at:new Date().toISOString()};
+          writeDemoData(currentUser.id, demo);
+          renderSellerApplication(demo.application);
+          $('sellerMessage').textContent = 'ДЕМО: заявка сохранена только в этом браузере, администратор её не получит.';
+        } else {
+          const {data, error} = await authClient.from('seller_applications').insert({user_id:currentUser.id,roblox_username,note}).select('status,roblox_username,note,created_at').single();
+          if (error) throw error;
+          renderSellerApplication(data);
+          $('sellerMessage').textContent = 'Заявка отправлена на проверку.';
+        }
+      } catch (error) {
+        $('sellerMessage').textContent = error.message || 'Не удалось отправить заявку.';
+      } finally {
+        $('sellerSubmit').disabled = false;
+        $('sellerSubmit').textContent = 'Отправить заявку продавца';
+      }
+    });
+
+    $('authPassword').addEventListener('input', updatePasswordFeedback);
+    $('authPasswordConfirm').addEventListener('input', updatePasswordFeedback);
+    $('authEmail').addEventListener('input', () => {
+      if (($('authForm').dataset.mode || 'login') === 'signup') updatePasswordFeedback();
+    });
+    $('togglePassword').addEventListener('click', () => {
+      const input = $('authPassword');
+      const show = input.type === 'password';
+      input.type = show ? 'text' : 'password';
+      $('togglePassword').textContent = show ? 'Скрыть' : 'Показать';
+      $('togglePassword').setAttribute('aria-label', show ? 'Скрыть пароль' : 'Показать пароль');
+      $('togglePassword').setAttribute('aria-pressed', String(show));
+    });
+    $('authForm').addEventListener('submit', async event => {
+      event.preventDefault();
+      const mode = $('authForm').dataset.mode || 'login';
+      const email = $('authEmail').value.trim();
+      const password = $('authPassword').value;
+      if (mode === 'signup') {
+        const checks = updatePasswordFeedback();
+        if (!checks.valid) {
+          $('authMessage').textContent = 'Пароль должен содержать не менее 12 символов, не быть очевидным и не содержать часть адреса почты.';
+          $('authPassword').focus();
+          return;
+        }
+        if (password !== $('authPasswordConfirm').value) {
+          $('authMessage').textContent = 'Пароли не совпадают.';
+          $('authPasswordConfirm').focus();
+          return;
+        }
+      }
+      if (!authClient) {
+        $('authMessage').textContent = 'Настоящая регистрация пока не подключена. Добавь URL проекта Supabase и публичный ключ в настройки HTML-файла — тогда создание аккаунта и вход будут работать через защищённый сервис.';
+        return;
+      }
+      $('authSubmit').disabled = true;
+      $('authSubmit').textContent = 'Подождите...';
+      $('authMessage').textContent = '';
+      try {
+        const result = mode === 'signup'
+          ? await authClient.auth.signUp({email, password, options:{emailRedirectTo: 'https://godlyxmarket.site/'}})
+          : await authClient.auth.signInWithPassword({email, password});
+        if (result.error) throw result.error;
+        if (mode === 'signup' && !result.data.session) {
+          $('authMessage').textContent = 'Аккаунт создан. Проверь почту и подтверди адрес, затем войди.';
+        } else {
+          updateAuthUI(result.data.user); $('authMessage').textContent = 'Успешно!';
+        }
+      } catch (error) {
+        $('authMessage').textContent = error.message || 'Не удалось выполнить вход.';
+      } finally {
+        $('authSubmit').disabled = false;
+        $('authSubmit').textContent = mode === 'signup' ? 'Зарегистрироваться' : 'Войти';
+      }
+    });
+    $('resendConfirmationButton').addEventListener('click', async () => {
+      const email = $('authEmail').value.trim();
+      if (!email) {
+        $('authMessage').textContent = 'Сначала введи адрес электронной почты.';
+        $('authEmail').focus();
+        return;
+      }
+      if (!authClient) {
+        $('authMessage').textContent = 'Подключение Supabase не настроено.';
+        return;
+      }
+      const button = $('resendConfirmationButton');
+      button.disabled = true;
+      button.textContent = 'Отправляем письмо…';
+      try {
+        const { error } = await authClient.auth.resend({
+          type: 'signup',
+          email,
+          options: { emailRedirectTo: 'https://godlyxmarket.site/' }
+        });
+        if (error) throw error;
+        $('authMessage').textContent = 'Новое письмо отправлено. Открой самое последнее письмо от Supabase и перейди по ссылке один раз.';
+      } catch (error) {
+        $('authMessage').textContent = error.message || 'Не удалось отправить письмо повторно.';
+      } finally {
+        button.disabled = false;
+        button.textContent = 'Отправить письмо подтверждения повторно';
+      }
+    });
+
+    $('signOutButton').addEventListener('click', async () => {
+      if (isDemoUser) {
+        updateAuthUI(null);
+        setAuthMode('login');
+        return;
+      }
+      if (!authClient) return;
+      const {error} = await authClient.auth.signOut();
+      if (error) $('authMessage').textContent = error.message;
+      else { updateAuthUI(null); setAuthMode('login'); }
+    });
+    if (authClient) {
+      authClient.auth.getUser().then(({data}) => updateAuthUI(data.user));
+      authClient.auth.onAuthStateChange((_event, session) => updateAuthUI(session?.user || null, false));
+    }
+
+    $('search').addEventListener('input', render);
+    $('sort').addEventListener('change', render);
+    $('minRange').addEventListener('input', () => syncPriceControls('min'));
+    $('maxRange').addEventListener('input', () => syncPriceControls('max'));
+    $('minPrice').addEventListener('change', () => syncNumberControls('min'));
+    $('maxPrice').addEventListener('change', () => syncNumberControls('max'));
+    $('reset').addEventListener('click', () => {
+      $('search').value = ''; $('sort').value = 'new'; state.category = 'all';
+      state.rarities.clear(); state.chromaOnly = false;
+      document.querySelectorAll('.category-button').forEach(el => el.classList.toggle('active', el.dataset.category === 'all'));
+      document.querySelectorAll('[data-rarity]').forEach(el => el.classList.remove('active'));
+      $('chromaToggle').classList.remove('active'); $('chromaToggle').setAttribute('aria-pressed','false');
+      $('minRange').value = '0'; $('minPrice').value = '0';
+      $('maxRange').value = '1000'; $('maxPrice').value = '1000';
+      $('priceLabel').textContent = `${formatRubles(0)} — ${formatRubles(1000)}`;
+      render();
+    });
+    render();
+    // The entrance effect runs only on the initial page opening.
+    window.addEventListener('load', () => {
+      window.setTimeout(() => document.body.classList.remove('page-enter'), 5200);
+    });
+  </script>
+</body>
+</html>
